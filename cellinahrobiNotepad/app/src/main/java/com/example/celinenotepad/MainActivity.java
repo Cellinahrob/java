@@ -65,13 +65,26 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.celinenotepad.adapters.NotesAdapter;
+import com.example.celinenotepad.database.DatabaseHelper;
+import com.example.celinenotepad.database.Note;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
+
+    ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,20 +98,56 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                startActivity(new Intent(getBaseContext(),AddNoteActivity.class));
+                startActivity(new Intent(getBaseContext(), AddNoteActivity.class));
 
             }
         });
-        TextView tvHello=findViewById(R.id.tvHello);
-        tvHello.setText("YOU'LL NEVER WALK ALONE!");
-        final Button btnViewNote=findViewById(R.id.viewNote);
-        btnViewNote.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getBaseContext(),ViewNote.class));
-            }
-        });
+
+       listView = findViewById(R.id.ListView);
+
     }
+
+    private void displayNotes(){
+        DatabaseHelper databaseHelper = new DatabaseHelper(getBaseContext(),"notes",null,1);
+        List<Note> notesList= new ArrayList<Note>();
+        notesList = databaseHelper.getNotes();
+        Log.d("MyNotes","My database has" +  notesList.size()  + " notes");
+        NotesAdapter notesAdapter = new NotesAdapter(getBaseContext(),0,notesList);
+        listView.setAdapter(notesAdapter);
+//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//            }
+//
+//        });
+
+    }
+    public void displayNames(){
+    List<String>namesList = new ArrayList<String>();
+    namesList.add("cellinah robi");
+    namesList.add("joy mutanu");
+    namesList.add("vero njeri");
+    namesList.add("mac rima");
+    namesList.add("joy wanja");
+    namesList.add("joan luka");
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,namesList);
+        listView.setAdapter(arrayAdapter);
+
+    }
+
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        displayNotes();
+//        displayNames();
+
+    }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
